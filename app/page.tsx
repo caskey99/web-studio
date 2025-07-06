@@ -1,95 +1,124 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { Metadata } from 'next'
+import styles from './page.module.scss'
+import StudioInfoClient from './components/studio-Info-client/studio-Info-client'
+import HeroImageClient from './components/hero-image-client/hero-image-client'
 
-export default function Home() {
+// SEO метаданные для главной страницы
+export const metadata: Metadata = {
+  title: 'WebStudio - Главная',
+  description: 'Профессиональная веб-студия WebStudio. Создаем современные, быстрые и эффективные веб-решения для вашего бизнеса.',
+}
+
+/**
+ * HeroContent компонент - основной контент hero секции (SSG)
+ * Содержит заголовок, подзаголовок и call-to-action кнопки
+ * Статический контент для максимальной производительности
+ */
+function HeroContent() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div style={{
+      flex: 1,
+      maxWidth: '600px'
+    }}>
+      {/* Основной заголовок с градиентным эффектом */}
+      <h1 style={{
+        fontSize: '72px',
+        fontWeight: 800,
+        lineHeight: 1.1,
+        background: 'linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text',
+        marginBottom: '24px'
+      }}>
+        WebStudio
+      </h1>
+      
+      {/* Подзаголовок с описанием услуг */}
+      <p style={{
+        fontSize: '24px',
+        color: 'var(--text-secondary)',
+        marginBottom: '40px',
+        lineHeight: 1.4
+      }}>
+        Создаем современные, быстрые и эффективные веб-решения для вашего бизнеса. 
+        Профессиональная разработка с фокусом на производительность и пользовательский опыт.
+      </p>
+      
+      {/* Call-to-action кнопки - статические для SSG */}
+      <div style={{
+        display: 'flex',
+        gap: '20px',
+        flexWrap: 'wrap'
+      }}>
+        <a 
+          href="/contacts" 
+          className={styles.btnPrimary}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
+          Обсудить проект
         </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        <a 
+          href="/projects" 
+          className={styles.btnSecondary}
         >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
+          Наши работы
         </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
     </div>
-  );
+  )
+}
+
+/**
+ * HeroSection компонент - главная секция страницы (SSG)
+ * Комбинирует статический контент и клиентское изображение
+ */
+function HeroSection() {
+  return (
+    <section className={styles.hero} aria-label="Главная секция">
+      <HeroContent />
+      <HeroImageClient/>
+    </section>
+  )
+}
+
+/**
+ * Главная страница приложения (SSG)
+ * Комбинирует статический контент для SEO с интерактивными клиентскими компонентами
+ */
+export default function HomePage() {
+  return (
+    <>
+      {/* Structured Data для главной страницы */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": "WebStudio - Главная страница",
+            "description": "Профессиональная веб-студия, специализирующаяся на создании современных веб-решений",
+            "url": "https://webstudio.com",
+            "mainEntity": {
+              "@type": "Organization",
+              "name": "WebStudio",
+              "description": "Веб-студия полного цикла",
+              "offers": {
+                "@type": "Service",
+                "name": "Веб-разработка",
+                "description": "Создание современных веб-сайтов и приложений"
+              }
+            }
+          })
+        }}
+      />
+      
+      {/* Основной контент страницы в контейнере */}
+      <div className={styles.container}>
+        <HeroSection />
+      </div>
+      
+      {/* Интерактивная секция с информацией о студии */}
+      <StudioInfoClient />
+    </>
+  )
 }

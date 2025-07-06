@@ -1,0 +1,118 @@
+/* CSS Reset и базовые стили */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* CSS переменные для системы тем */
+:root {
+  /* Основные цвета бренда */
+  --brand-primary: #6366f1;
+  --brand-secondary: #8b5cf6;
+  --brand-accent: #06b6d4;
+  
+  /* Размеры и пропорции */
+  --header-height: 80px;
+  --footer-height: 120px;
+  --main-padding: 120px;
+  --container-max-width: 1400px;
+  --hero-image-size: 500px;
+  --border-radius: 12px;
+  --transition-speed: 0.3s;
+  
+  /* Z-index система */
+  --z-header: 1000;
+  --z-loading: 9999;
+  --z-modal: 8000;
+}
+
+/* Светлая тема (по умолчанию) */
+:root,
+[data-theme="light"] {
+  /* Фоновые цвета */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #e2e8f0;
+  
+  /* Цвета текста */
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  
+  /* Акцентные цвета */
+  --accent-hover: #4f46e5;
+  --accent-active: #3730a3;
+  
+  /* Границы и тени */
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+/* Темная тема */
+[data-theme="dark"] {
+  /* Фоновые цвета */
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  
+  /* Цвета текста */
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  
+  /* Акцентные цвета */
+  --accent-hover: #7c3aed;
+  --accent-active: #5b21b6;
+  
+  /* Границы и тени */
+  --border-color: #334155;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+}
+
+/* Базовые стили body */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+}
+
+/* Адаптивность для переменных */
+@media (max-width: 1200px) {
+  :root {
+    --hero-image-size: 400px;
+    --main-padding: 80px;
+  }
+}
+
+@media (max-width: 968px) {
+  :root {
+    --main-padding: 60px;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --hero-image-size: 300px;
+    --main-padding: 60px;
+    --header-height: 70px;
+    --footer-height: 100px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --hero-image-size: 250px;
+    --main-padding: 40px;
+  }
+}
