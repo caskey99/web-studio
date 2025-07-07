@@ -1,53 +1,82 @@
 'use client'
 
 import { useEffect, useState } from "react"
+import styles from './loading-screen.module.scss'
 
 /**
- * LoadingScreen компонент для анимации загрузки
+ * LoadingScreen компонент с продвинутой анимацией
+ * Градиентный фон + желтый спиннер с trailing + анимация штор
  */
 function LoadingScreen() {
   const [isVisible, setIsVisible] = useState(true)
   const [isLoading, setIsLoading] = useState(true)
+  const [showCurtains, setShowCurtains] = useState(false)
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-      setTimeout(() => setIsVisible(false), 300)
-    }, 500)
+    const minTime = 300 // минимальное время показа
 
-    return () => clearTimeout(timer)
+    // Ждем готовности контента
+    const checkReady = () => {
+      return document.readyState === 'complete'
+    }
+
+    const finishLoading = () => {
+      setTimeout(() => {
+        setIsLoading(false)
+        
+        // Запускаем анимацию штор
+        setTimeout(() => {
+          setShowCurtains(true)
+          
+          // Полностью скрываем после анимации штор
+          setTimeout(() => {
+            setIsVisible(false)
+          }, 800)
+        }, 200)
+      }, minTime)
+    }
+
+    // Проверяем готовность
+    if (checkReady()) {
+      finishLoading()
+    } else {
+      const handleLoad = () => finishLoading()
+      window.addEventListener('load', handleLoad)
+      
+      // Fallback через 3 секунды
+      const fallback = setTimeout(finishLoading, 3000)
+      
+      return () => {
+        window.removeEventListener('load', handleLoad)
+        clearTimeout(fallback)
+      }
+    }
   }, [])
 
   if (!isVisible) return null
 
   return (
-    <div 
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        background: 'var(--bg-primary)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 'var(--z-loading)',
-        opacity: isLoading ? 1 : 0,
-        transition: 'opacity var(--transition-speed) ease',
-        pointerEvents: isLoading ? 'auto' : 'none'
-      }}
-    >
-      <div style={{
-        width: '50px',
-        height: '50px',
-        border: '3px solid var(--border-color)',
-        borderTop: '3px solid var(--brand-primary)',
-        borderRadius: '50%',
-        animation: 'spin 1s linear infinite'
-      }}></div>
+    <div className={styles.loadingScreen}>
+      {/* Градиентный фон */}
+      <div className={styles.background} />
+      
+      {/* Спиннер с trailing эффектом */}
+      <div className={`${styles.spinnerContainer} ${!isLoading ? styles.fadeOut : ''}`}>
+        <div className={styles.spinner}>
+          <div className={styles.core} />
+          <div className={styles.trail} />
+        </div>
+      </div>
+
+      {/* Анимация штор */}
+      <div className={`${styles.curtains} ${showCurtains ? styles.active : ''}`}>
+        <div className={`${styles.panel} ${styles.leftTop}`} />
+        <div className={`${styles.panel} ${styles.leftBottom}`} />
+        <div className={`${styles.panel} ${styles.rightTop}`} />
+        <div className={`${styles.panel} ${styles.rightBottom}`} />
+      </div>
     </div>
   )
 }
 
-export default LoadingScreen;
+export default LoadingScreen

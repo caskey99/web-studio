@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import styles from '../.././page.module.scss';
+import LoadingScreen from '../loading-screen/loading-screen' // ← Импорт нового компонента
 
 /**
  * Hook для управления темой
@@ -25,33 +25,6 @@ function useTheme() {
   }
 
   return { theme, toggleTheme, mounted }
-}
-
-/**
- * LoadingScreen компонент для анимации загрузки
- */
-function LoadingScreen() {
-  const [isVisible, setIsVisible] = useState(true)
-  const [isLoading, setIsLoading] = useState(true)
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-      setTimeout(() => setIsVisible(false), 300)
-    }, 500)
-
-    return () => clearTimeout(timer)
-  }, [])
-
-  if (!isVisible) return null
-
-  return (
-    <div 
-     className={`${styles.loading} ${!isLoading ? styles.fadeOut : ''}`}
-    >
-      <div className={styles.loadingSpinner}></div>
-    </div>
-  )
 }
 
 /**
@@ -167,7 +140,7 @@ function Header() {
 export default function ClientComponents() {
   return (
     <>
-      <LoadingScreen />
+      <LoadingScreen /> {/* ← Теперь использует новый компонент */}
       <Header />
     </>
   )
