@@ -7,6 +7,8 @@
   --loading-trail: rgba(217, 119, 6, 0.3);
   --loading-spinner-size: 60px;
   --loading-duration: 1.2s;
+  --curtain-duration: 1.2s;
+  --curtain-easing: cubic-bezier(0.76, 0, 0.24, 1);
 }
 
 /* Основной контейнер */
@@ -50,7 +52,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: 2;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s ease;
 }
 
 .fadeOut {
@@ -120,76 +122,71 @@
   }
 }
 
-/* Контейнер штор */
+/* Контейнер вертикальных штор */
 .curtains {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 3;
+  z-index: 1; /* Меньше чем у спиннера, чтобы контент был виден сзади */
   pointer-events: none;
 }
 
-/* Панели штор */
+/* Базовые стили для панелей штор */
 .panel {
   position: absolute;
+  top: 0;
+  height: 100vh;
+  width: 25%; /* Каждая панель занимает четверть ширины экрана */
   background: var(--loading-bg-dark);
-  transition: transform 0.6s cubic-bezier(0.645, 0.045, 0.355, 1);
+  transition: transform var(--curtain-duration) var(--curtain-easing);
   
   :global([data-theme="dark"]) & {
     background: #0f172a;
   }
 }
 
-/* Позиционирование панелей */
-.leftTop {
-  top: 0;
+/* Позиционирование вертикальных панелей */
+.leftPanel1 {
   left: 0;
-  width: 50%;
-  height: 50%;
+  transform-origin: right center; /* Схлопывается к правому краю */
 }
 
-.leftBottom {
-  bottom: 0;
-  left: 0;
-  width: 50%;
-  height: 50%;
+.leftPanel2 {
+  left: 25%;
+  transform-origin: right center; /* Схлопывается к правому краю */
 }
 
-.rightTop {
-  top: 0;
-  right: 0;
-  width: 50%;
-  height: 50%;
+.rightPanel1 {
+  left: 50%;
+  transform-origin: left center; /* Схлопывается к левому краю */
 }
 
-.rightBottom {
-  bottom: 0;
-  right: 0;
-  width: 50%;
-  height: 50%;
+.rightPanel2 {
+  left: 75%;
+  transform-origin: left center; /* Схлопывается к левому краю */
 }
 
-/* Активная анимация штор */
+/* Активная анимация вертикальных штор */
 .active {
-  .leftTop {
-    transform: translateX(-100%);
+  .leftPanel1 {
+    transform: scaleX(0); /* Схлопывается влево */
     transition-delay: 0ms;
   }
   
-  .leftBottom {
-    transform: translateX(-100%);
+  .leftPanel2 {
+    transform: scaleX(0); /* Схлопывается влево */
     transition-delay: 150ms;
   }
   
-  .rightTop {
-    transform: translateX(100%);
+  .rightPanel1 {
+    transform: scaleX(0); /* Схлопывается вправо */
     transition-delay: 75ms;
   }
   
-  .rightBottom {
-    transform: translateX(100%);
+  .rightPanel2 {
+    transform: scaleX(0); /* Схлопывается вправо */
     transition-delay: 225ms;
   }
 }
@@ -198,32 +195,49 @@
 @media (max-width: 768px) {
   :root {
     --loading-spinner-size: 50px;
+    --curtain-duration: 1s;
   }
   
-  /* На мобильных только 2 панели */
-  .leftBottom,
-  .rightBottom {
+  /* На мобильных упрощаем до 2 панелей */
+  .leftPanel2,
+  .rightPanel2 {
     display: none;
   }
   
-  .leftTop,
-  .rightTop {
-    height: 100%;
+  .leftPanel1 {
+    width: 50%;
+  }
+  
+  .rightPanel1 {
+    width: 50%;
+    left: 50%;
   }
   
   .active {
-    .leftTop {
+    .leftPanel1 {
       transition-delay: 0ms;
     }
     
-    .rightTop {
+    .rightPanel1 {
       transition-delay: 100ms;
     }
   }
 }
 
+/* Адаптация для маленьких экранов */
+@media (max-width: 480px) {
+  :root {
+    --loading-spinner-size: 40px;
+  }
+}
+
 /* Уменьшенная анимация для accessibility */
 @media (prefers-reduced-motion: reduce) {
+  :root {
+    --loading-duration: 2s;
+    --curtain-duration: 0.8s;
+  }
+  
   .spinner {
     animation: rotate 2s linear infinite;
   }
@@ -237,14 +251,40 @@
     display: none;
   }
   
-  .leftBottom,
-  .rightTop,
-  .rightBottom {
+  /* Упрощенная анимация штор */
+  .leftPanel2,
+  .rightPanel1,
+  .rightPanel2 {
     display: none;
   }
   
-  .leftTop {
+  .leftPanel1 {
     width: 100%;
-    height: 100%;
+    transform-origin: left center;
+  }
+  
+  .active .leftPanel1 {
+    transition-delay: 0ms;
+  }
+}
+
+/* Улучшенная производительность */
+.panel {
+  backface-visibility: hidden;
+  perspective: 1000px;
+  will-change: transform;
+}
+
+/* Дополнительные эффекты для премиум вида */
+.active .panel {
+  /* Добавляем легкое размытие для smooth эффекта */
+  filter: blur(0.5px);
+}
+
+/* Адаптация под высокую плотность пикселей */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .core,
+  .trail {
+    border-width: 2px;
   }
 }

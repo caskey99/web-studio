@@ -4,8 +4,8 @@ import { useEffect, useState } from "react"
 import styles from './loading-screen.module.scss'
 
 /**
- * LoadingScreen компонент с продвинутой анимацией
- * Градиентный фон + желтый спиннер с trailing + анимация штор
+ * LoadingScreen с вертикальными шторами
+ * 4 вертикальные секции, которые схлопываются к краям экрана
  */
 function LoadingScreen() {
   const [isVisible, setIsVisible] = useState(true)
@@ -13,44 +13,28 @@ function LoadingScreen() {
   const [showCurtains, setShowCurtains] = useState(false)
 
   useEffect(() => {
-    const minTime = 300 // минимальное время показа
-
-    // Ждем готовности контента
-    const checkReady = () => {
-      return document.readyState === 'complete'
-    }
+    const minTime = 800 // увеличено время для лучшего эффекта
 
     const finishLoading = () => {
       setTimeout(() => {
         setIsLoading(false)
         
-        // Запускаем анимацию штор
+        // Запускаем анимацию вертикальных штор
         setTimeout(() => {
           setShowCurtains(true)
           
           // Полностью скрываем после анимации штор
           setTimeout(() => {
             setIsVisible(false)
-          }, 800)
-        }, 200)
+          }, 1600) // время для завершения анимации
+        }, 300)
       }, minTime)
     }
 
-    // Проверяем готовность
-    if (checkReady()) {
-      finishLoading()
-    } else {
-      const handleLoad = () => finishLoading()
-      window.addEventListener('load', handleLoad)
-      
-      // Fallback через 3 секунды
-      const fallback = setTimeout(finishLoading, 3000)
-      
-      return () => {
-        window.removeEventListener('load', handleLoad)
-        clearTimeout(fallback)
-      }
-    }
+    // Всегда показываем минимальное время для красивой анимации
+    const timer = setTimeout(finishLoading, minTime)
+
+    return () => clearTimeout(timer)
   }, [])
 
   if (!isVisible) return null
@@ -68,12 +52,15 @@ function LoadingScreen() {
         </div>
       </div>
 
-      {/* Анимация штор */}
+      {/* Вертикальные шторы - 4 секции */}
       <div className={`${styles.curtains} ${showCurtains ? styles.active : ''}`}>
-        <div className={`${styles.panel} ${styles.leftTop}`} />
-        <div className={`${styles.panel} ${styles.leftBottom}`} />
-        <div className={`${styles.panel} ${styles.rightTop}`} />
-        <div className={`${styles.panel} ${styles.rightBottom}`} />
+        {/* Левая часть экрана - 2 секции */}
+        <div className={`${styles.panel} ${styles.leftPanel1}`} />
+        <div className={`${styles.panel} ${styles.leftPanel2}`} />
+        
+        {/* Правая часть экрана - 2 секции */}
+        <div className={`${styles.panel} ${styles.rightPanel1}`} />
+        <div className={`${styles.panel} ${styles.rightPanel2}`} />
       </div>
     </div>
   )
